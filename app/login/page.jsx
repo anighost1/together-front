@@ -1,13 +1,31 @@
 "use client"
 
+import { loginDal } from "@/app/login/auth.dal"
+import { useMutation } from "@tanstack/react-query"
+
 export default function Login() {
 
-    const onSubmit = (e) => {
+    const loginMutation = useMutation({ mutationFn: loginDal })
+
+    const onSubmit = async (e) => {
         e.preventDefault()
         const usernameOrEmail = e.target.elements.usernameOrEmail.value
         const password = e.target.elements.password.value
-        console.log('usernameOrEmail', usernameOrEmail)
-        console.log('password', password)
+        console.log('usernameOrEmail : ', usernameOrEmail)
+        console.log('password : ', password)
+
+        const dataToSend = {
+            usernameOrEmail,
+            password
+        }
+
+        try {
+            const result = await loginMutation.mutateAsync(dataToSend)
+            console.log(result)
+            console.log(loginMutation.status)
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     return (
@@ -41,6 +59,7 @@ export default function Login() {
                             <input type="password" className="grow" placeholder="Password" name="password" />
                         </label>
                         <button className="btn btn-primary">Login</button>
+                        <h4>{loginMutation.status}</h4>
                     </form>
                 </div>
             </div>
